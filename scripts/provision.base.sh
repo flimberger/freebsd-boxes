@@ -16,14 +16,6 @@ sysrc hostname="$hostname"
 # also set it for first boot
 hostname "$hostname"
 
-# change home directory
-cd /
-mv /home/vagrant /usr/home/
-rmdir /home
-ln -s /usr/home /home
-pw usermod vagrant -d /usr/home/vagrant
-cd
-
 # set UTF-8
 cat <<EOF >>/etc/login.conf
 utf8|UTF-8 Encoding:\\
@@ -42,10 +34,10 @@ sed s:quarterly:latest: </etc/pkg/FreeBSD.conf >/usr/local/etc/pkg/repos/FreeBSD
 pkg update
 
 # install salt
-pkg install -y py27-salt
+pkg install -y py36-salt
 
 # general tools
-pkg install -y git mksh tmux vim-lite
+pkg install -y git mksh tmux vim-console
 
 # the vm will be used interactively, so change the default shell
 pw usermod vagrant -s /usr/local/bin/mksh
