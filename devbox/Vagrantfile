@@ -16,6 +16,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     pkg install -qy cmake llvm80 ninja
     pkg install -qy go
-    pkg install -qy python36 py36-mypy py36-pyflakes
+    pkg install -qy python36 py36-mypy py36-pyflakes py36-pylint py36-pycodestyle
   SHELL
 end
