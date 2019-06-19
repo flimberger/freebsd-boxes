@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/freebsd-11.1"
+  config.vm.guest = :freebsd
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.ssh.shell = "/bin/sh"
+
+  # this is needed to export /usr/src and /usr/obj via nfs
+  config.vm.network "public_network"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.cpus = 4
+    vb.memory = "4192"
+  end
+
+  config.vm.provision "shell", inline: <<-SHELL
+    # set hostname
+    sysrc hostname=builder.local
+
+    # change home directory
+    cd /
+    mv /home/vagrant /usr/home/
+    rmdir /home
+    ln -s /usr/home /home
+    pw usermod vagrant -d /usr/home/vagrant
+    cd
+
+    # load filemon so meta_mode can be used
+    echo "filemon_load=\"YES\"" >>/boot/loader.conf
+
+    # TODO: create zroot/usr/obj dataset
+    # currently, / is exported so /usr/obj can be mounted
+    zfs set sharenfs=on zroot/ROOT/default
+    zfs set sharenfs=on zroot/usr/src
+
+    # TODO: /etc/src.conf and /etc/make.conf need to be copied
+
+    chown -R vagrant:vagrant /usr/src
+    chown -R vagrant:vagrant /usr/obj
+
+    # install software
+    pkg update
+    pkg upgrade -y
+    pkg install -y git mksh tmux vim-lite
+
+    # the vm will be used interactively, so change the default shell
+    pw usermod vagrant -s /usr/local/bin/mksh
+  SHELL
+end
