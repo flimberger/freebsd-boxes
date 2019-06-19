@@ -12,49 +12,10 @@ Vagrant.configure("2") do |config|
     vb.memory = "2048"
   end
 
+  config.vm.provision "shell", path: "../scripts/provision.base.sh", args: "devbox"
   config.vm.provision "shell", inline: <<-SHELL
-    # set hostname
-    sysrc hostname=devbox.local
-    # also set it for first boot
-    hostname devbox.local
-
-    # change home directory
-    cd /
-    mv /home/vagrant /usr/home/
-    rmdir /home
-    ln -s /usr/home /home
-    pw usermod vagrant -d /usr/home/vagrant
-    cd
-
-    # set UTF-8
-    cat <<EOF >>/etc/login.conf
-utf8|UTF-8 Encoding:\\\\
-  :charset=utf-8:\\\\
-  :lang=en_US.UTF-8:\\\\
-  :tc=default:
-EOF
-    cap_mkdb /etc/login.conf
-    pw usermod vagrant -L utf8
-
-    # install software
-    pkg update
-    # install salt
-    pkg install -y py27-salt
-
-    # general tools
-    pkg install -y git mksh tmux vim-lite
-
-    # the vm will be used interactively, so change the default shell
-    pw usermod vagrant -s /usr/local/bin/mksh
-
-    # C and C++
-    pkg install -y cmake llvm40 ninja
-
-    # Go
+    pkg install -y cmake llvm50 ninja
     pkg install -y go
-
-    # Python
     pkg install -y python36 py36-mypy py36-pyflakes
-
   SHELL
 end
