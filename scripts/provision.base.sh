@@ -31,13 +31,13 @@ mkdir -p /usr/local/etc/pkg/repos
 sed s:quarterly:latest: </etc/pkg/FreeBSD.conf >/usr/local/etc/pkg/repos/FreeBSD.conf
 
 # install software
-pkg update
+pkg update -q
 
 # install salt
-pkg install -y py36-salt
+pkg install -qy py36-salt
 
 # general tools
-pkg install -y git mksh tmux vim-console
+pkg install -qy git mksh tmux vim-console
 
 # the vm will be used interactively, so change the default shell
 pw usermod vagrant -s /usr/local/bin/mksh

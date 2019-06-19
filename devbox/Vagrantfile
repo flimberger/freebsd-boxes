@@ -14,8 +14,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell", path: "../scripts/provision.base.sh", args: "devbox"
   config.vm.provision "shell", inline: <<-SHELL
-    pkg install -y cmake llvm80 ninja
-    pkg install -y go
-    pkg install -y python36 py36-mypy py36-pyflakes
+    pkg install -qy cmake llvm80 ninja
+    pkg install -qy go
+    pkg install -qy python36 py36-mypy py36-pyflakes
   SHELL
 end
